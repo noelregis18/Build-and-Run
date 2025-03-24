@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Hero Section -->
+        <div class="bg-primary text-white p-5 rounded-3 mb-4">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Gas Utility Customer Service</h1>
+                <p class="col-md-8 fs-4">Streamlining your service requests for a better experience.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'create_request' %}" class="btn btn-light btn-lg">Submit a Service Request</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg">Register Now</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg ms-2">Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row g-4 py-3">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Submit Requests Online</h3>
+                        <p class="card-text">Easily submit service requests anytime, anywhere without waiting on hold.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search-location fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Track Request Status</h3>
+                        <p class="card-text">Monitor the progress of your service requests in real-time.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-upload fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Attach Documents</h3>
+                        <p class="card-text">Upload photos or documents to help us understand your needs better.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="my-5">
+            <h2 class="text-center mb-4">How It Works</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                            <span class="fs-4">1</span>
+                        </div>
+                        <h5>Register an Account</h5>
+                        <p class="text-muted">Create an account with your gas utility credentials.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                            <span class="fs-4">2</span>
+                        </div>
+                        <h5>Submit a Request</h5>
+                        <p class="text-muted">Fill out the service request form with your details.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                            <span class="fs-4">3</span>
+                        </div>
+                        <h5>Track Progress</h5>
+                        <p class="text-muted">Monitor the status of your service request.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">
+                            <span class="fs-4">4</span>
+                        </div>
+                        <h5>Resolution</h5>
+                        <p class="text-muted">Receive updates and resolution for your service request.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        {% if not user.is_authenticated %}
+        <div class="bg-light p-5 rounded-3 text-center">
+            <h2>Ready to get started?</h2>
+            <p class="lead">Create an account to submit and track your service requests.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 me-md-2">Register Now</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg px-4">Login</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

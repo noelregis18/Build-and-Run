@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Request #{{ service_request.request_number }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Service Request #{{ service_request.request_number }}</h3>
+                <span class="badge {% if service_request.status == 'pending' %}bg-warning text-dark{% elif service_request.status == 'in_progress' %}bg-info{% elif service_request.status == 'on_hold' %}bg-secondary{% elif service_request.status == 'completed' %}bg-success{% elif service_request.status == 'cancelled' %}bg-danger{% endif %} fs-6">
+                    {{ service_request.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Service Information</h5>
+                        <p><strong>Type:</strong> {{ service_request.service_type.name }}</p>
+                        <p><strong>Submitted:</strong> {{ service_request.created_at|date:"F j, Y, g:i a" }}</p>
+                        <p>
+                            <strong>Priority:</strong> 
+                            <span class="badge {% if service_request.priority == 'low' %}bg-success{% elif service_request.priority == 'medium' %}bg-info{% elif service_request.priority == 'high' %}bg-warning text-dark{% elif service_request.priority == 'emergency' %}bg-danger{% endif %}">
+                                {{ service_request.get_priority_display }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Customer Information</h5>
+                        <p><strong>Name:</strong> {{ service_request.customer.get_full_name }}</p>
+                        <p><strong>Account #:</strong> {{ service_request.customer.profile.account_number }}</p>
+                        <p><strong>Phone:</strong> {{ service_request.customer.profile.phone_number }}</p>
+                    </div>
+                </div>
+                
+                <h5>Description</h5>
+                <div class="p-3 bg-light rounded mb-4">
+                    {{ service_request.description|linebreaks }}
+                </div>
+                
+                {% if attachments %}
+                    <h5>Attachments</h5>
+                    <div class="list-group mb-4">
+                        {% for attachment in attachments %}
+                            <a href="{{ attachment.file.url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" target="_blank">
+                                <div>
+                                    <i class="fas fa-paperclip me-2"></i>
+                                    {{ attachment.filename }}
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ attachment.uploaded_at|date:"M d, Y" }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'request_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Requests
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Status Updates</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for update in status_updates %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>{{ update.get_new_status_display }}</strong>
+                                <small class="text-muted">{{ update.created_at|date:"M d, Y, g:i a" }}</small>
+                            </div>
+                            {% if update.notes %}
+                                <p class="mb-0 mt-2">{{ update.notes }}</p>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center py-4">
+                            <p class="mb-0 text-muted">No updates yet</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

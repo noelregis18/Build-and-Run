@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Service Request{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Submit a Service Request</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Please correct the errors below.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label for="id_service_type" class="form-label">Service Type</label>
+                        <select name="service_type" id="id_service_type" class="form-select {% if form.service_type.errors %}is-invalid{% endif %}" required>
+                            <option value="">-- Select Service Type --</option>
+                            {% for service_type in service_types %}
+                                <option value="{{ service_type.id }}" {% if form.service_type.value == service_type.id %}selected{% endif %}>
+                                    {{ service_type.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.service_type.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.service_type.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text" id="serviceTypeHelp"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Description</label>
+                        <textarea name="description" id="id_description" rows="5" class="form-control {% if form.description.errors %}is-invalid{% endif %}" required placeholder="Please describe your request in detail">{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.description.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Please provide a detailed description of your request. Include relevant details like location, when you noticed the issue, etc.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_priority" class="form-label">Priority</label>
+                        <select name="priority" id="id_priority" class="form-select {% if form.priority.errors %}is-invalid{% endif %}" required>
+                            <option value="low" {% if form.priority.value == 'low' %}selected{% endif %}>Low</option>
+                            <option value="medium" {% if form.priority.value == 'medium' or not form.priority.value %}selected{% endif %}>Medium</option>
+                            <option value="high" {% if form.priority.value == 'high' %}selected{% endif %}>High</option>
+                            <option value="emergency" {% if form.priority.value == 'emergency' %}selected{% endif %}>Emergency</option>
+                        </select>
+                        {% if form.priority.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.priority.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <strong>Emergency:</strong> Use only for gas leaks or situations requiring immediate attention.<br>
+                            <strong>High:</strong> Service disruptions or urgent issues.<br>
+                            <strong>Medium:</strong> Standard service requests.<br>
+                            <strong>Low:</strong> General inquiries or non-urgent matters.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_attachments" class="form-label">Attachments</label>
+                        <input type="file" name="attachments" id="id_attachments" class="form-control">
+                        <div class="form-text">
+                            You can attach a photo or document to help us understand your request better. (Optional)
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> By submitting this request, you acknowledge that a service technician may need to contact you and/or visit your property to address the issue.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                        <a href="{% url 'request_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceTypeSelect = document.getElementById('id_service_type');
+    const serviceTypeHelp = document.getElementById('serviceTypeHelp');
+    const serviceTypes = {
+        {% for service_type in service_types %}
+            {{ service_type.id }}: "{{ service_type.description }}",
+        {% endfor %}
+    };
+    
+    // Update description when service type changes
+    serviceTypeSelect.addEventListener('change', function() {
+        const selectedId = this.value;
+        if (selectedId && serviceTypes[selectedId]) {
+            serviceTypeHelp.textContent = serviceTypes[selectedId];
+        } else {
+            serviceTypeHelp.textContent = '';
+        }
+    });
+    
+    // Set initial description if a service type is selected
+    if (serviceTypeSelect.value) {
+        const event = new Event('change');
+        serviceTypeSelect.dispatchEvent(event);
+    }
+});
+</script>
+{% endblock %}
